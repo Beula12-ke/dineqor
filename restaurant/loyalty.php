@@ -1,0 +1,9 @@
+<?php require_once __DIR__ . '/../includes/page.php';
+$u=page_guard(['restaurant_owner','restaurant_staff']); if(!has_permission($u,'manage_settings')){http_response_code(403);page_head('Loyalty access');nav_bar($u);echo '<main class="wrap"><div class="empty"><b>You do not have access to loyalty settings.</b>Ask the restaurant owner or manager for access.</div></main>';page_foot();exit;}
+page_head('Loyalty rewards');nav_bar($u); ?>
+<main class="wrap loyalty-page"><header class="inventory-heading"><div><div class="eyebrow">RESTAURANT OPERATIONS</div><h1>Loyalty rewards</h1><p>Reward signed-in customers for completed and paid orders.</p></div></header>
+<section class="dash-panel loyalty-settings-panel"><div class="panel-heading"><div><h2>Rewards program</h2><p>Points are earned automatically after an eligible order is completed and paid.</p></div></div>
+<form id="loyaltyForm" class="loyalty-form"><label class="loyalty-toggle"><input type="checkbox" name="is_enabled"><span><b>Enable loyalty points</b><small>Only customers signed into Dineqor can earn points.</small></span></label>
+<div class="loyalty-settings-grid"><label>Spend to earn points (KSh)<input name="shillings_per_point" type="number" min="1" max="1000000" required></label><label>Points earned each time<input name="points_per_earn" type="number" min="1" max="10000" required></label><label>Redemption step (points)<input name="redemption_points" type="number" min="1" max="1000000" required></label><label>Reward value per step (KSh)<input name="redemption_value" type="number" min="0.01" step="0.01" required></label></div>
+<p class="loyalty-note">Customers can view their balance and redeem a full reward step during online or QR checkout when signed in.</p><div class="inventory-dialog-actions"><div class="msg" id="loyaltyMessage"></div><button class="btn" type="submit">Save rewards settings</button></div></form></section></main>
+<?php page_foot('loyalty.js');

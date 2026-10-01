@@ -1,0 +1,24 @@
+# Dineqor — public front controller rewrite rules
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Pass the Authorization header through (required behind some proxies)
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # If the file or directory exists, serve it directly
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Otherwise send everything to the front controller
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# Block access to dotfiles (.env, .git, etc.)
+<FilesMatch "(^\.|\.(?!well-known))">
+    Require all denied
+</FilesMatch>
+
+DirectoryIndex index.php

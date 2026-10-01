@@ -1,0 +1,27 @@
+.idea/
+.vscode/
+*.swp
+.DS_Store
+*.log
+Thumbs.db
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+vendor/
+
+# Build/cache files
+dist/
+build/
+.cache/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Application secrets
+config/.app_key

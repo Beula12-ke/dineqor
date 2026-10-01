@@ -1,0 +1,20 @@
+Options -Indexes
+RewriteEngine On
+RewriteBase /dineqor/
+
+# Never serve dotfiles (.env, .env.local, .gitignore, ...) or config/includes/tools over HTTP.
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>
+RedirectMatch 404 /\.(env|git)
+
+RewriteRule ^(config|includes|tools)/ - [F,L]
+
+# One dynamic template renders every restaurant
+RewriteRule ^restaurants/?$ index.php#restaurants [L,NE]
+RewriteRule ^restaurant/dashboard/?$ restaurant/dashboard.php [L]
+RewriteRule ^restaurant/([a-z0-9-]+)/?$ restaurant-page.php?slug=$1 [L,QSA]
+RewriteRule ^order/([a-z0-9-]+)/table/([A-Za-z0-9_-]+)/?$ order.php?slug=$1&token=$2 [L,QSA]
+
+# Keep database schemas and upgrade scripts private
+RewriteRule ^database/ - [F,L]
