@@ -7,6 +7,8 @@
   const types = { qr_table: 'Dine-in', dine_in: 'Dine-in', pickup: 'Pickup', takeaway: 'Takeaway', delivery: 'Delivery', pos: 'POS' };
   const labels = { new: 'Accept order', confirmed: 'Start cooking', preparing: 'Mark ready' };
   let knownNew = new Set();
+  let knownPicked = new Set();
+  let knownReady = new Set();
 
   function elapsed(value) {
     const created = new Date(String(value || '').replace(' ', 'T'));
@@ -18,13 +20,14 @@
   function card(order) {
     const where = order.table_number ? (order.table_label || `Table ${order.table_number}`) : (types[order.order_type] || order.order_type);
     const items = (order.items || []).map(item => `<li><b>${Number(item.qty)}×</b> ${esc(item.name)}${item.variation ? ` <small>(${esc(item.variation)})</small>` : ''}${item.addons?.length ? `<small class="kitchen-addons">+ ${item.addons.map(esc).join(', ')}</small>` : ''}${item.notes ? `<small class="kitchen-note">${esc(item.notes)}</small>` : ''}</li>`).join('');
+    const waitLabel = ['pickup', 'takeaway'].includes(order.order_type) ? 'Awaiting customer' : (order.order_type === 'delivery' ? 'Awaiting driver' : 'Awaiting pickup');
     return `<article class="kitchen-order ${order.status === 'new' ? 'is-new' : ''}" data-id="${Number(order.id)}">
       <div class="kitchen-order-top"><b>#${esc(String(order.order_number).split('-').pop())}</b><span class="kitchen-age" data-created="${esc(order.created_at)}">${esc(elapsed(order.created_at))}</span></div>
       <div class="kitchen-order-meta"><span>${esc(where)}</span><span>${esc(order.customer_name || 'Guest')}</span></div>
       <ul class="kitchen-items">${items || '<li>Order details unavailable</li>'}</ul>
       ${order.special_instructions ? `<div class="kitchen-special"><b>Order note</b><span>${esc(order.special_instructions)}</span></div>` : ''}
       <div class="kitchen-order-bottom"><span>${esc(new Date(String(order.created_at || '').replace(' ', 'T')).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }))}</span>
-      ${labels[order.status] ? `<button class="btn sm kitchen-advance" type="button" data-id="${Number(order.id)}">${labels[order.status]}</button>` : '<span class="kitchen-handoff">Awaiting pickup</span>'}</div>
+      ${labels[order.status] ? `<button class="btn sm kitchen-advance" type="button" data-id="${Number(order.id)}">${labels[order.status]}</button>` : (order.picked_up_at ? `<span class="kitchen-handoff picked">✓ Picked up${order.picked_up_by ? ' by ' + esc(order.picked_up_by) : ''}</span>` : `<span class="kitchen-handoff">${waitLabel}</span>`)}</div>
     </article>`;
   }
 
@@ -45,6 +48,12 @@
       if (!response.ok) { summary.textContent = response.error || 'Could not load orders.'; return; }
       const newOrders = new Set(response.orders.filter(order => order.status === 'new').map(order => Number(order.id)));
       if (silent && [...newOrders].some(id => !knownNew.has(id))) toast('New kitchen order');
+      const pickedNow = new Map(response.orders.filter(order => order.status === 'ready' && order.picked_up_at).map(order => [Number(order.id), order]));
+      if (silent) pickedNow.forEach((order, id) => { if (!knownPicked.has(id)) toast(`#${String(order.order_number).split('-').pop()} picked up${order.picked_up_by ? ' by ' + order.picked_up_by : ''}`); });
+      knownPicked = new Set(pickedNow.keys());
+      if (silent) response.orders.forEach(order => { if (order.status === 'out_for_delivery' && knownReady.has(Number(order.id))) toast(`#${String(order.order_number).split('-').pop()} collected for delivery${order.picked_up_by ? ' by ' + order.picked_up_by : ''}`); });
+      if (silent) response.orders.forEach(order => { if (order.status === 'completed' && ['pickup', 'takeaway'].includes(order.order_type) && knownReady.has(Number(order.id))) toast(`#${String(order.order_number).split('-').pop()} handed to customer${order.picked_up_by ? ' by ' + order.picked_up_by : ''}`); });
+      knownReady = new Set(response.orders.filter(order => order.status === 'ready').map(order => Number(order.id)));
       knownNew = newOrders;
       draw(response.orders);
     } catch {

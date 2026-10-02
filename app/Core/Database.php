@@ -39,6 +39,7 @@ final class Database
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES   => false,
             ]);
+            try { self::$instance->exec("SET time_zone = '+03:00'"); } catch (\Throwable $e) { error_log('db time zone: ' . $e->getMessage()); }
         } catch (PDOException $e) {
             throw new RuntimeException('Database connection failed: ' . $e->getMessage(), 0, $e);
         }

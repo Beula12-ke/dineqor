@@ -528,3 +528,47 @@ body:has(.workspace-side) .panel-heading h2,body:has(.workspace-side) .setting-t
 
 /* Overview-style spreadsheet order list */
 .orders-list-panel{padding:0;overflow:hidden;margin:14px 0 45px}.orders-list-heading{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:17px 19px;border-bottom:1px solid #e9ede9}.orders-list-heading h2{margin:0 0 4px;font-size:1rem;color:#35483b}.orders-list-heading p{margin:0;color:#929b94;font-size:.7rem}.orders-list-wrap{overflow:auto}.orders-list-table{width:100%;min-width:1120px;border-collapse:collapse;background:#fff}.orders-list-table th{padding:11px 12px;background:#f8f9f7;border-bottom:1px solid #e9ede9;color:#929b94;text-align:left;font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}.orders-list-table td{padding:11px 12px;border-bottom:1px solid #edf0ed;color:#526156;vertical-align:top;font-size:.68rem}.orders-list-table tbody tr:hover{background:#fcfdfa}.orders-list-table tbody tr:last-child td{border-bottom:0}.orders-list-table th:first-child,.orders-list-table td:first-child{padding-left:18px}.orders-list-table th:last-child,.orders-list-table td:last-child{padding-right:18px}.orders-list-table td small,.orders-list-table td a{display:block;margin-top:4px;color:#929b94;font-size:.59rem;line-height:1.35;overflow-wrap:anywhere}.orders-list-table td a{color:#637b68;text-decoration:none}.orders-list-table td a:hover{text-decoration:underline}.orders-ref{min-width:125px}.orders-ref>b,.orders-customer>b,.orders-type>b{display:block;color:#3f5145;font-size:.67rem}.orders-customer{min-width:140px}.orders-type{min-width:115px}.orders-items-cell{min-width:240px}.orders-item{display:flex;justify-content:space-between;gap:9px;padding:4px 0;border-bottom:1px solid #f0f2ef;color:#4f5d52;font-size:.63rem}.orders-item:last-child{border-bottom:0}.orders-item>span{min-width:0;overflow-wrap:anywhere}.orders-item>span>b{color:#829087}.orders-item> b{white-space:nowrap;color:#58675b}.orders-item small.orders-item-extra{font-size:.55rem}.orders-total-cell{min-width:125px}.orders-total-cell>div{display:flex;justify-content:space-between;gap:9px;margin:0 0 4px;color:#929b94;font-size:.59rem}.orders-total-cell>div b{color:#58675b;font-size:.6rem;white-space:nowrap}.orders-total-cell .orders-total-grand{margin-top:6px;padding-top:6px;border-top:1px solid #e7ebe7;color:#32473a;font-weight:800}.orders-total-cell .orders-total-grand b{color:#253b30;font-size:.7rem}.orders-status{display:inline-block;padding:5px 8px;border-radius:99px;background:#eef3ed;color:#5b7860;font-size:.58rem;font-weight:800;white-space:nowrap}.orders-status.new,.orders-status.confirmed{background:#fff5df;color:#9b783d}.orders-status.preparing,.orders-status.out_for_delivery{background:#edf2fb;color:#587097}.orders-status.cancelled{background:#faece9;color:#b85a4a}.orders-payment{min-width:90px}.orders-actions{display:grid;gap:5px;min-width:87px}.orders-actions .btn{width:100%;margin:0;padding:7px 8px;font-size:.59rem}.orders-muted{color:#a1aaa3;font-size:.61rem}.orders-list-empty{display:grid;gap:5px;justify-items:center;padding:50px 20px;color:#8b958d;font-size:.72rem}.orders-list-empty b{color:#45564a;font-size:.86rem}
+
+/* Waiter Orders view */
+.wo-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin:0 0 20px}
+.wo-stat{background:#fff;border:1px solid #e7ebe8;border-radius:15px;padding:17px 18px}
+.wo-stat small{display:block;color:#778279;font-size:.66rem;font-weight:800;letter-spacing:.06em}
+.wo-stat b{display:block;font-family:var(--font-display);font-size:2rem;letter-spacing:-.05em;color:#1f3a2d;margin-top:8px;line-height:1}
+.wo-stat span{display:block;color:#9aa29b;font-size:.68rem;margin-top:6px}
+.wo-tabs{display:flex;gap:4px;flex-wrap:wrap;background:#e9ede8;border-radius:12px;padding:5px;margin:0 0 18px}
+.wo-tab{border:0;background:transparent;border-radius:9px;padding:10px 16px;font:600 .74rem var(--font-body);color:#6b776e;cursor:pointer}
+.wo-tab.on{background:#fff;color:#1f3a2d;font-weight:800;box-shadow:0 1px 3px rgba(31,55,43,.08)}
+.wo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:15px}
+.wo-card{background:#fff;border:1px solid #e7ebe8;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.wo-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.wo-card-top h3{font-size:1.02rem;margin:0;color:#1f3a2d;letter-spacing:-.02em}
+.wo-card-sub{color:#8a948c;font-size:.72rem;margin:4px 0 0}
+.wo-pill{font-size:.6rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border-radius:99px;padding:6px 10px;white-space:nowrap;background:#eef0ee;color:#6b776e}
+.wo-pill.received{background:#fff3dc;color:#9c711e}
+.wo-pill.confirmed{background:#edf2fb;color:#4f6b9d}
+.wo-pill.preparing{background:#e4f1e7;color:#2f7a48}
+.wo-pill.ready{background:#d9f0e0;color:#1d6b3a}
+.wo-pill.picked{background:#eae7f6;color:#5b4fa0}
+.wo-items{list-style:none;margin:0;padding:14px 0;border-top:1px solid #eef1ee;border-bottom:1px solid #eef1ee;display:grid;gap:7px;font-size:.8rem;color:#33443a}
+.wo-items small{color:#8a948c}
+.wo-card-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:34px}
+.wo-age{font-size:.68rem;font-weight:800;border-radius:8px;padding:7px 10px;background:#eef0ee;color:#6b776e}
+.wo-age.late{background:#fff0d6;color:#9c6a14}
+.wo-hint{font-size:.72rem;color:#8a948c}
+.wo-btn{border:0;border-radius:9px;padding:9px 14px;font:800 .72rem var(--font-body);cursor:pointer;background:#1f3a2d;color:#fff}
+.wo-btn.alt{background:#fff;color:#1f3a2d;border:1px solid #cfd8d1}
+.wo-btn:disabled{opacity:.55;cursor:default}
+@media(max-width:900px){.wo-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.wo-grid{grid-template-columns:1fr}.wo-tab{padding:9px 12px}}
+.kitchen-handoff.picked{color:#2f7a48;font-weight:800}
+
+.wo-pill.out{background:#e3f0fa;color:#27639a}
+.wo-meta{margin:0;font-size:.74rem;color:#58655b;line-height:1.5}
+.wo-meta b{color:#1f3a2d}
+.wo-meta a{color:#27639a;text-decoration:none;font-weight:700}
+.wo-pay{font-size:.74rem;font-weight:800;color:#9c6a14}
+.wo-pay.paid{color:#2f7a48}
+.wo-note{margin:0;font-size:.7rem;color:#a45d47}
+
+.recent-row.has-action>b:nth-child(5){text-align:right;color:#324238}
+.row-handover{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#f6f9f6;border-radius:9px;padding:9px 12px;font-size:.72rem;color:#58655b}

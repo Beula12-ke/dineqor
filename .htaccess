@@ -1,12 +1,6 @@
 Options -Indexes
 RewriteEngine On
-RewriteBase /dineqor/
-
-# Never serve dotfiles (.env, .env.local, .gitignore, ...) or config/includes/tools over HTTP.
-<FilesMatch "^\.">
-  Require all denied
-</FilesMatch>
-RedirectMatch 404 /\.(env|git)
+RewriteBase /
 
 RewriteRule ^(config|includes|tools)/ - [F,L]
 

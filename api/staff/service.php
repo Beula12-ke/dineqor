@@ -131,6 +131,45 @@ if ($action === 'serve') {
     json_out(['ok'=>true,'message'=>'Order marked served.']);
 }
 
+if ($action === 'pickup') {
+    if (!has_permission($u,'manage_orders')) json_error('You do not have permission to update orders.',403);
+    $orderId=filter_var($in['order_id'] ?? null,FILTER_VALIDATE_INT);
+    if (!$orderId || $orderId < 1) json_error('Order not found.',422);
+    try {
+        $pdo->beginTransaction();
+        $q=$pdo->prepare("SELECT id FROM orders WHERE id=? AND restaurant_id=? AND status='ready' AND order_type IN ('dine_in','qr_table') FOR UPDATE");
+        $q->execute([$orderId,$rid]);
+        if (!$q->fetch()) { $pdo->rollBack(); json_error('This order is not waiting for pickup.',409); }
+        $done=$pdo->prepare("SELECT COUNT(*) FROM order_status_history WHERE order_id=? AND notes='Picked up by waiter'");
+        $done->execute([$orderId]);
+        if ((int)$done->fetchColumn()>0) { $pdo->rollBack(); json_out(['ok'=>true,'message'=>'Already marked as picked up.']); }
+        $pdo->prepare("INSERT INTO order_status_history (order_id,status,changed_by,notes) VALUES (?,'ready',?,'Picked up by waiter')")->execute([$orderId,(int)$u['id']]);
+        $pdo->commit();
+    } catch (Throwable $e) { if ($pdo->inTransaction()) $pdo->rollBack(); error_log('waiter pickup: '.$e->getMessage()); json_error('Could not record the pickup.',500); }
+    log_activity('order.picked_up',(int)$u['id'],$rid,'order',(int)$orderId);
+    json_out(['ok'=>true,'message'=>'Kitchen has been told this order was picked up.']);
+}
+
+if ($action === 'handover') {
+    if (!has_permission($u,'manage_orders')) json_error('You do not have permission to update orders.',403);
+    $orderId=filter_var($in['order_id'] ?? null,FILTER_VALIDATE_INT);
+    if (!$orderId || $orderId < 1) json_error('Order not found.',422);
+    try {
+        $pdo->beginTransaction();
+        $q=$pdo->prepare("SELECT id,payment_status FROM orders WHERE id=? AND restaurant_id=? AND status='ready' AND order_type IN ('pickup','takeaway') FOR UPDATE");
+        $q->execute([$orderId,$rid]); $order=$q->fetch();
+        if (!$order) { $pdo->rollBack(); json_error('This order is not waiting for handover.',409); }
+        if ($order['payment_status']!=='paid') { $pdo->rollBack(); json_error('This order is not paid yet. The customer pays at the counter first.',409); }
+        $pdo->prepare("UPDATE orders SET status='completed',completed_at=NOW() WHERE id=? AND restaurant_id=?")->execute([$orderId,$rid]);
+        $pdo->prepare("INSERT INTO order_status_history (order_id,status,changed_by,notes) VALUES (?,'completed',?,'Handed to customer')")->execute([$orderId,(int)$u['id']]);
+        try { notify_customer_order_status($pdo,(int)$orderId,'completed'); } catch (Throwable $notificationError) { error_log('customer order notification was not saved: '.$notificationError->getMessage()); }
+        award_order_loyalty($pdo,$rid,(int)$orderId);
+        $pdo->commit();
+    } catch (Throwable $e) { if ($pdo->inTransaction()) $pdo->rollBack(); error_log('waiter handover: '.$e->getMessage()); json_error('Could not complete the handover.',500); }
+    log_activity('order.handed_over',(int)$u['id'],$rid,'order',(int)$orderId);
+    json_out(['ok'=>true,'message'=>'Order handed to the customer.']);
+}
+
 if ($action === 'close_table') {
     if (!has_permission($u,'manage_tables')) json_error('You do not have permission to close tables.',403);
     $tableId=filter_var($in['table_id'] ?? null,FILTER_VALIDATE_INT);
